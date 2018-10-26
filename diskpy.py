@@ -4,9 +4,8 @@ DISK_BLOCK_SIZE = 512
 
 def disk_init(filename, nblocks=100):
     with open(filename, 'wb+') as f:
-        block = bytearray([0 for i in range(DISK_BLOCK_SIZE)])
-        for i in range(nblocks):
-            f.write(block)
+        blocks = bytearray([0 for i in range(DISK_BLOCK_SIZE * nblocks)])
+        f.write(blocks)
     
 def disk_open(filename):
     try:
