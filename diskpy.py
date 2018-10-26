@@ -14,32 +14,38 @@ def disk_open(filename):
         print("COULD NOT OPEN {}".format(filename))
     
 def disk_size(filename):
-    pass 
+    return os.path.getsize(filename) // DISK_BLOCK_SIZE
     
 def disk_read(filename, blocknum):
-    pass
+    size = disk_size(filename)
+    assert(blocknum < size and blocknum >= 0), "BLOCK NUMBER OUT OF RANGE"
+
+    with open(filename, 'rb') as f:
+        r = f.read()
+        result = []
+        start = blocknum + DISK_BLOCK_SIZE
+        end = start + DISK_BLOCK_SIZE
+        for i in range(start, end):
+            result.append(int(r[i]))
+        return result
 
 def disk_write(filename, blocknum, data):
+    size = disk_size(filename)
     assert(len(data) <= DISK_BLOCK_SIZE), "INPUT DATA TOO LARGE; MAXIMUM {} BYTES; {} GIVEN".format(DISK_BLOCK_SIZE, len(data))
+    assert(blocknum < size and blocknum >= 0), "BLOCK NUMBER OUT OF RANGE"
 
     while len(data) < DISK_BLOCK_SIZE:
         data.append(0)
 
-    old_file = "OLD_"+filename
-    if os.path.exists(old_file):
-        os.remove(old_file)
-    os.rename(filename, old_file)
-    
-    assert(blocknum >= 0 and blocknum * DISK_BLOCK_SIZE < os.path.getsize(old_file)), "BLOCK NUMBER OUT OF RANGE"
+    blocks = []
+    for i in range(size):
+        if i == blocknum:
+            blocks += data
+        else:
+            blocks += disk_read(filename, i)
 
-    with open(filename, "wb+") as new, open(old_file, "rb") as old:
-
-        for i, line in enumerate(old):
-            if i == blocknum:
-                new.write(bytearray(data))
-            else:
-                new.write(line)
-    
+    with open(filename, 'wb') as f:
+        f.write(bytearray(blocks))
     
 def disk_close(stream):
     try:
