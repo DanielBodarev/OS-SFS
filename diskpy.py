@@ -52,6 +52,3 @@ def disk_close(stream):
         stream.close()
     except:
         print("COULD NOT CLOSE STREAM")
-
-disk_init("t.1", 2)
-disk_write("t.1", 1, [255 for i in range(DISK_BLOCK_SIZE)])
