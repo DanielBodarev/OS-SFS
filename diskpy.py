@@ -1,6 +1,6 @@
 DISK_BLOCK_SIZE = 512  
 
-def disk_init(filename, nblocks = 100 ):
+def disk_init(filename, nblocks = 100):
     pass
     
 def disk_open(filename):
