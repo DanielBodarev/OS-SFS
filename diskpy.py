@@ -4,8 +4,9 @@ DISK_BLOCK_SIZE = 512
 
 def disk_init(filename, nblocks=100):
     with open(filename, 'wb+') as f:
-        blocks = [0 for i in range(DISK_BLOCK_SIZE)]
-        [f.write(blocks) for i in range(nblocks)]
+        block = bytearray([0 for i in range(DISK_BLOCK_SIZE)])
+        for i in range(nblocks):
+            f.write(block)
     
 def disk_open(filename):
     try:
@@ -20,14 +21,25 @@ def disk_read(filename, blocknum):
     pass
 
 def disk_write(filename, blocknum, data):
-
-    old_file = "OLD_"+filename
-
     assert(len(data) <= DISK_BLOCK_SIZE), "INPUT DATA TOO LARGE; MAXIMUM {} BYTES; {} GIVEN".format(DISK_BLOCK_SIZE, len(data))
 
+    while len(data) < DISK_BLOCK_SIZE:
+        data.append(0)
+
+    old_file = "OLD_"+filename
+    if os.path.exists(old_file):
+        os.remove(old_file)
+    os.rename(filename, old_file)
+    
+    assert(blocknum >= 0 and blocknum * DISK_BLOCK_SIZE < os.path.getsize(old_file)), "BLOCK NUMBER OUT OF RANGE"
+
     with open(filename, "wb+") as new, open(old_file, "rb") as old:
-        for line in old:
-            new.write(line)
+
+        for i, line in enumerate(old):
+            if i == blocknum:
+                new.write(bytearray(data))
+            else:
+                new.write(line)
     
     
 def disk_close(stream):
@@ -36,4 +48,5 @@ def disk_close(stream):
     except:
         print("COULD NOT CLOSE STREAM")
 
-disk_write("hello.123", 0, [22 for i in range(DISK_BLOCK_SIZE)])
+disk_init("t.1", 2)
+disk_write("t.1", 1, [255 for i in range(DISK_BLOCK_SIZE)])
