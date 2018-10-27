@@ -30,10 +30,10 @@ def disk_read(filename, blocknum):
     with open(filename, 'rb') as f:
         r = f.read()
         result = []
-        start = blocknum + DISK_BLOCK_SIZE
+        start = blocknum * DISK_BLOCK_SIZE
         end = start + DISK_BLOCK_SIZE
         for i in range(start, end):
-            result.append(int(r[i]))
+            result.append(ord((r[i])))
         return result
 
 def disk_write(filename, blocknum, data):
