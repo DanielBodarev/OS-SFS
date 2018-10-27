@@ -16,8 +16,8 @@ def buffer(ctx):
         ctx.obj = []
 
 @disk.command('create')
-@click.argument('filename', type=click.File('wb'))
-@click.option('--size', default=5, help="Size of disk")
+@click.argument('filename', type=click.STRING)
+@click.argument('size', type=click.INT)
 def create_disk(filename, size):
     dk.disk_init(filename, size)
     click.echo("Successfully created {}".format(filename))
