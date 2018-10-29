@@ -1,6 +1,19 @@
 import diskpy as dk
 import sys
 
+# NOTE: HERE ARE ALL THE INITIAL COMMANDS:
+# exit
+# disk create
+# disk open
+# disk close
+# disk status
+# buffer create
+# buffer copy
+# buffer write
+# buffer print
+# buffer fill
+# SECONDARY PROMPTS WILL BE SELF-EXPLANATORY
+
 buffer = None
 noBuffer = "BUFFER DOES NOT EXIST"
 
