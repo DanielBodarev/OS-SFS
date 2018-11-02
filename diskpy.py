@@ -2,9 +2,6 @@ import os
 
 DISK_BLOCK_SIZE = 512 
 
-ERROR = -1
-SUCCESS = 1
-
 open_file = None
 file_name = ""
 
@@ -18,23 +15,21 @@ def disk_open(filename):
     global open_file
     global file_name
     file_name = filename
-    assert(open_file == None), "File already open."
+    assert(open_file == None), "Close {} before opening another disk".format(file_name)
     try:
         open_file = open(filename, 'rb+')
-        return SUCCESS
     except:
-        print("COULD NOT OPEN {}".format(filename))
-        return ERROR
+        raise Exception("COULD NOT OPEN {}".format(filename))
     
 def disk_size():
     global open_file
     global file_name
-    assert(open_file != None), "NO FILE OPEN"
+    assert(open_file != None), "NO DISK OPEN"
     return os.path.getsize(file_name) // DISK_BLOCK_SIZE
     
 def disk_read(blocknum):
     global open_file
-    assert(open_file != None), "NO FILE OPEN"
+    assert(open_file != None), "NO DISK OPEN"
 
     size = disk_size()
     assert(blocknum < size and blocknum >= 0), "BLOCK NUMBER OUT OF RANGE"
@@ -44,47 +39,44 @@ def disk_read(blocknum):
     open_file.seek(start, 0)
     r = open_file.read(DISK_BLOCK_SIZE)
     for byte in r: 
-        result.append(ord(byte))
+        result.append(byte)
     return result
 
 def disk_write(blocknum, data):
     global open_file
-    assert(open_file != None), "NO FILE OPEN"
+    assert(open_file != None), "NO DISK OPEN"
 
-    try:
-        size = disk_size()
-        assert(len(data) <= DISK_BLOCK_SIZE), "INPUT DATA TOO LARGE; MAXIMUM {} BYTES; {} GIVEN".format(DISK_BLOCK_SIZE, len(data))
-        assert(blocknum < size and blocknum >= 0), "BLOCK NUMBER OUT OF RANGE"
+    size = disk_size()
+    assert(len(data) <= DISK_BLOCK_SIZE), "INPUT DATA TOO LARGE; MAXIMUM {} BYTES; {} GIVEN".format(DISK_BLOCK_SIZE, len(data))
+    assert(blocknum < size and blocknum >= 0), "BLOCK NUMBER OUT OF RANGE"
 
-        while len(data) < DISK_BLOCK_SIZE:
-            data.append(0)
+    # Fills in the rest of the block with zeros if not already full
+    while len(data) < DISK_BLOCK_SIZE:
+        data.append(0)
 
-        blocks = []
-        for i in range(size):
-            if i == blocknum:
-                blocks += data
-            else:
-                blocks += disk_read(i)
+    blocks = []
+    for i in range(size):
+        if i == blocknum:
+            blocks += data
+        else:
+            blocks += disk_read(i)
 
-        open_file.write(bytearray(blocks))
-        
-        return SUCCESS
-    except:
-        return ERROR
+    open_file.seek(0, 0)
+    open_file.write(bytearray(blocks))
     
 def disk_close():
     global open_file
-    assert(open_file != None), "NO FILE OPEN"
+    global file_name
+    assert(open_file != None), "NO DISK OPEN"
 
     try:
         open_file.close()
         open_file = None
-        return SUCCESS
     except:
-        print("COULD NOT CLOSE STREAM")
-        return ERROR
+        raise Exception("Could not close {}".format(file_name))
 
 def disk_status():
     global open_file
+    global file_name
     assert(open_file != None), "NO FILE OPEN"
-    print("DISK HAS {} BLOCKS".format(disk_size()))
+    print("DISK {} HAS {} BLOCKS".format(file_name, disk_size()))

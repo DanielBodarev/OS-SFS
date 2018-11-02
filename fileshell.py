@@ -23,28 +23,34 @@ def inp(prompt):
 def create_disk():
     name = inp("What should be the name of the disk?")
     size = get_number("How many blocks should the disk have?")
-    dk.disk_init(name, size)
-    print("Created disk '{}' with {} blocks".format(name, size))
+    try:
+        dk.disk_init(name, size)
+    except Exception as e:
+        print(e)
 
 def close_disk():
-    result = dk.disk_close()
-    if result == dk.SUCCESS:
-        print("Closed disk")
-    else:
-        print("Could not close disk")
+    try:
+        dk.disk_close()
+    except Exception as e:
+        print(e)
 
 def open_disk():
     name = inp("Which disk should be opened?")
-    dk.disk_open(name)
-    print("Opened disk")
+    try:
+        dk.disk_open(name)
+    except Exception as e:
+        print(e)
 
 def disk_status():
-    dk.disk_status()
+    try:
+        dk.disk_status()
+    except Exception as e:
+        print(e)
 
 def create_buffer():
     global buffer
     buffer = [0 for i in range(dk.DISK_BLOCK_SIZE)]
-    print("Buffer created successfully")
+    print("Created Buffer")
 
 def copy_buffer():
     global buffer
@@ -52,9 +58,13 @@ def copy_buffer():
         print(noBuffer)
         return
     block = get_number("Which block?")
-    from_disk = dk.disk_read(block)
-    buffer = from_disk
-    print("Copied from block {} into buffer".format(block))
+    try:
+        from_disk = dk.disk_read(block)
+        print(from_disk)
+        buffer = from_disk
+        print("Copied from block {} into buffer".format(block))
+    except Exception as e:
+        print(e)
 
 def fill_buffer():
     global buffer
@@ -80,11 +90,11 @@ def write_buffer():
         return
     block = get_number("Which block on that disk?")
     as_byte_array = bytearray(buffer)
-    result = dk.disk_write(block, as_byte_array)
-    if result == dk.SUCCESS:
-        print("Successfully wrote buffer to block {} in disk".format(block))
-    else:
-        print("Could not write buffer to block {} in disk".format(block))
+    try:
+        dk.disk_write(block, as_byte_array)
+        print("Wrote from buffer to disk.")
+    except Exception as e:
+        print(e)
 
 def get_number(prompt):
     p = inp(prompt)
@@ -97,7 +107,7 @@ def get_number(prompt):
 
 def start():
     while True:
-        prompt = inp("[-] What would you like to do?")
+        prompt = inp("What would you like to do?")
         if prompt in commands:
             commands[prompt]()
         elif prompt == "ext":
