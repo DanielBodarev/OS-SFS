@@ -27,16 +27,16 @@ def create_disk():
     print("Created disk '{}' with {} blocks".format(name, size))
 
 def close_disk():
-    name = inp("Which disk should be closed?")
-    result = dk.disk_close(name)
+    result = dk.disk_close()
     if result == dk.SUCCESS:
-        print("Closed disk '{}'".format(name))
+        print("Closed disk")
     else:
-        print("Could not close disk '{}'".format(name))
+        print("Could not close disk")
 
 def open_disk():
-    dk.disk_open()
-    print("Opened disk '{}'".format(name))
+    name = inp("Which disk should be opened?")
+    dk.disk_open(name)
+    print("Opened disk")
 
 def disk_status():
     dk.disk_status()
@@ -51,11 +51,10 @@ def copy_buffer():
     if buffer is None:
         print(noBuffer)
         return
-    name = inp("From which disk should the buffer copy?")
-    block = get_number("Which block on that disk?")
-    from_disk = dk.disk_read(name, block)
+    block = get_number("Which block?")
+    from_disk = dk.disk_read(block)
     buffer = from_disk
-    print("Copied from '{}' block {} into buffer".format(name, block))
+    print("Copied from block {} into buffer".format(block))
 
 def fill_buffer():
     global buffer
@@ -79,14 +78,13 @@ def write_buffer():
     if buffer is None:
         print(noBuffer)
         return
-    name = inp("Which disk should the buffer be written into?")
     block = get_number("Which block on that disk?")
     as_byte_array = bytearray(buffer)
-    result = dk.disk_write(name, block, as_byte_array)
+    result = dk.disk_write(block, as_byte_array)
     if result == dk.SUCCESS:
-        print("Successfully wrote buffer to block {} in disk '{}'".format(block, name))
+        print("Successfully wrote buffer to block {} in disk".format(block))
     else:
-        print("Could not write buffer to block {} in disk '{}'".format(block, name))
+        print("Could not write buffer to block {} in disk".format(block))
 
 def get_number(prompt):
     p = inp(prompt)

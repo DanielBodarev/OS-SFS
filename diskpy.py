@@ -6,6 +6,7 @@ ERROR = -1
 SUCCESS = 1
 
 open_file = None
+file_name = ""
 
 def disk_init(filename, nblocks=5):
     global open_file
@@ -15,6 +16,8 @@ def disk_init(filename, nblocks=5):
     
 def disk_open(filename):
     global open_file
+    global file_name
+    file_name = filename
     assert(open_file == None), "File already open."
     try:
         open_file = open(filename, 'rb+')
@@ -25,8 +28,9 @@ def disk_open(filename):
     
 def disk_size():
     global open_file
+    global file_name
     assert(open_file != None), "NO FILE OPEN"
-    return open_file.tell() // DISK_BLOCK_SIZE
+    return os.path.getsize(file_name) // DISK_BLOCK_SIZE
     
 def disk_read(blocknum):
     global open_file
