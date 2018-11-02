@@ -2,10 +2,10 @@ import diskpy as dk
 import sys
 
 # NOTE: HERE ARE ALL THE INITIAL COMMANDS:
-# exit
+# ext
 # disk create
 # disk open
-# disk close
+# disk close 
 # disk status
 # buffer create
 # buffer copy
@@ -28,17 +28,18 @@ def create_disk():
 
 def close_disk():
     name = inp("Which disk should be closed?")
-    dk.disk_close(name)
-    print("Closed disk '{}'".format(name))
+    result = dk.disk_close(name)
+    if result == dk.SUCCESS:
+        print("Closed disk '{}'".format(name))
+    else:
+        print("Could not close disk '{}'".format(name))
 
 def open_disk():
-    name = inp("Which disk should be opened?")
-    dk.disk_open(name)
+    dk.disk_open()
     print("Opened disk '{}'".format(name))
 
 def disk_status():
-    name = inp("Which disk should display status?")
-    dk.disk_status(name)
+    dk.disk_status()
 
 def create_buffer():
     global buffer
@@ -101,7 +102,7 @@ def start():
         prompt = inp("[-] What would you like to do?")
         if prompt in commands:
             commands[prompt]()
-        elif prompt == "exit":
+        elif prompt == "ext":
             return
         else:
             print("'{}' is not a valid command".format(prompt))
