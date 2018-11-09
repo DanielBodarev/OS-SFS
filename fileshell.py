@@ -1,5 +1,7 @@
 import diskpy as dk
 import sys
+import sfs
+import bitmap as bp
 
 # NOTE: HERE ARE ALL THE INITIAL COMMANDS:
 # ext
@@ -12,6 +14,10 @@ import sys
 # buffer write
 # buffer print
 # buffer fill
+# disk format
+# disk dir
+# disk create file
+# disk bitmap init
 # SECONDARY PROMPTS WILL BE SELF-EXPLANATORY
 
 buffer = None
@@ -22,9 +28,9 @@ def inp(prompt):
 
 def create_disk():
     name = inp("What should be the name of the disk?")
-    size = get_number("How many blocks should the disk have?")
+    #size = get_number("How many blocks should the disk have?")
     try:
-        dk.disk_init(name, size)
+        dk.disk_init(name)#, size)
     except Exception as e:
         print(e)
 
@@ -96,6 +102,33 @@ def write_buffer():
     except Exception as e:
         print(e)
 
+def format_disk():
+    try:
+        sfs.format()
+        print("Successfuly formatted disk.")
+    except Exception as e:
+        print(e)
+
+def dir_disk():
+    try:
+        sfs.print_dirs()
+    except Exception as e:
+        print(e)
+
+def create_file_disk():
+    filename = inp("What should the name of the file be?")
+    try:
+        sfs.new_file(filename)
+        print("Successfully created {}".format(filename))
+    except Exception as e:
+        print(e)
+
+def bitmap_init_disk():
+    try:
+        bp.init()
+    except Exception as e:
+        print(e)
+
 def get_number(prompt):
     p = inp(prompt)
     try:
@@ -116,7 +149,10 @@ def start():
             print("'{}' is not a valid command".format(prompt))
 
 commands = {"buffer create":create_buffer, "disk create":create_disk, "disk close":close_disk, "disk open":open_disk,
-"disk status":disk_status, "buffer copy":copy_buffer, "buffer fill":fill_buffer, "buffer print":print_buffer, "buffer write":write_buffer}
+"disk status":disk_status, "buffer copy":copy_buffer, "buffer fill":fill_buffer, "buffer print":print_buffer, 
+"buffer write":write_buffer, "disk format":format_disk, "disk dir":dir_disk, "disk file create":create_file_disk, "disk bitmap init":bitmap_init_disk}
 
 if __name__ == "__main__":
     start()
+
+#dir displays list of files
