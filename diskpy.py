@@ -1,4 +1,5 @@
-import os
+import os, sys
+os.chdir(sys.path[0])
 
 DISK_BLOCK_SIZE = 512 
 NUMBER_OF_BLOCKS = 64
@@ -8,6 +9,7 @@ file_name = ""
 
 def disk_init(filename, nblocks=NUMBER_OF_BLOCKS):
     global open_file
+    open(filename, "wb").close()
     disk_open(filename)
     blocks = bytearray([0 for i in range(DISK_BLOCK_SIZE * nblocks)])
     open_file.write(blocks)
@@ -81,5 +83,3 @@ def disk_status():
     global file_name
     assert(open_file != None), "NO FILE OPEN"
     print("DISK {} HAS {} BLOCKS".format(file_name, disk_size()))
-
-#disk_open("123.txt")
